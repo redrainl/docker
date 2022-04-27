@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: your_username
+      WORDPRESS_DB_PASSWORD: your_password
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - /docker_wp/www:/var/www/html
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: your_username
+      MYSQL_PASSWORD: your_password
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - /docker_wp/mysql:/var/lib/mysql
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      ROCKET_TLS: '{certs = "/sslfull_chain.pem", key = "/ssl/private.key"}'
+    volumes:
+      - /docker_vaultwarden:/data
+      - /docker_vaultwarden/ssl:/ssl
+
+    volumes:
+      - /docker_vaultwarden:/data
+      - /docker_vaultwarden/ssl:/ssl
+
+
+volumes:
+  wordpress:
+  db:
+
